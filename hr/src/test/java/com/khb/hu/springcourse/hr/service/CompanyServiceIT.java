@@ -5,6 +5,9 @@ import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import static org.assertj.core.api.Assertions.assertThat;
+
+import org.hibernate.LazyInitializationException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +135,28 @@ class CompanyServiceIT {
         List<Company> found = companyService.findByExampleWithSpecification(example);
 
         assertThat(found).containsExactly(companies.get(0), companies.get(1));
+    }
+
+    @Test
+    void findCompanyById_WithLazyFetchedEmployees(){ //cannot pass if EAGER fetch is defined at Company.employees
+        List<Company> companies = saveDefaultTestCompanies();
+
+        Company company = companyRepository.findById(companies.get(0).getId()).get();
+        Assertions.assertThrows(LazyInitializationException.class, () -> {
+            company.getEmployees().iterator();
+        });
+    }
+
+    @Test
+    void findCompanyById_WithEagerFetchedEmployees(){
+        List<Company> companies = saveDefaultTestCompanies();
+        Employee employee = saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        Company company = companyRepository.findByIdWithEmployees(companies.get(0).getId()).get();
+
+        assertThat(company.getEmployees().get(0).getId()).isEqualTo(employee.getId());
     }
 
     private Employee saveNewEmployeeForCompany(String employeeName, LocalDate workStart, Company company) {

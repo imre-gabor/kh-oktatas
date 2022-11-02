@@ -1,5 +1,8 @@
 package com.khb.hu.springcourse.hr.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +17,8 @@ public class Company {
     private Integer id;
     private String name;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company"/*, fetch = FetchType.EAGER*/)
+    //@Fetch(FetchMode.SELECT)
     private List<Employee> employees;
 
     public Company(){}
@@ -57,7 +61,7 @@ public class Company {
     }
 
     public List<Employee> getEmployees() {
-        return Collections.unmodifiableList(employees);
+        return employees == null ? null : Collections.unmodifiableList(employees);
     }
 
     public void setEmployees(List<Employee> employees) {
