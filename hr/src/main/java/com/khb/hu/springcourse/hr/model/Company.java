@@ -14,6 +14,9 @@ public class Company {
     private Integer id;
     private String name;
 
+    @OneToMany(mappedBy = "company")
+    private List<Employee> employees;
+
     public Company(){}
 
     public Company(String name) {
@@ -28,9 +31,6 @@ public class Company {
         this.id = id;
         this.name = name;
     }
-
-    @OneToMany(mappedBy = "company")
-    private List<Employee> employees;
 
     public void addEmployee(Employee employee){
         employee.setCompany(this);

@@ -1,6 +1,7 @@
 package com.khb.hu.springcourse.hr.service;
 
 import com.khb.hu.springcourse.hr.model.Company;
+import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,5 +94,51 @@ class CompanyServiceIT {
         List<Company> found = companyService.findByExampleWithSpecification(new Company(companies.get(1).getId(),"ny"));
 
         assertThat(found).containsExactly(companies.get(1));
+    }
+
+    @Test
+    void findByExampleWithSpecification_ByNameAndEmployeeName() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        List<Company> found = companyService.findByExampleWithSpecification(example);
+
+        assertThat(found).containsExactly(companies.get(0));
+    }
+
+    @Test
+    void findByExampleWithSpecification_ByNameAndEmployeeWorkStart() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 31),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "", null, 0.0, LocalDate.of(2021, 10, 20))));
+        List<Company> found = companyService.findByExampleWithSpecification(example);
+
+        assertThat(found).containsExactly(companies.get(0), companies.get(1));
+    }
+
+    private Employee saveNewEmployeeForCompany(String employeeName, LocalDate workStart, Company company) {
+        Employee employee = employeeRepository.save(
+                new Employee(null, employeeName, "actor", 100000,
+                        workStart));
+        company.addEmployee(employee);
+        return employeeRepository.save(employee);
     }
 }
