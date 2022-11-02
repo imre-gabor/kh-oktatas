@@ -27,23 +27,24 @@ public class HrApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		List<Employee> employees = Arrays.asList(
-				new Employee(null, "Kovács Géza", "developer",
-						900000, LocalDate.of(2015, 10, 1)),
-				new Employee(null, "Nagy Péter", "Dev",
-						900000, LocalDate.of(2015, 10, 1)),
-				new Employee(null, "Kis Gábor", "tester",
-						900000, LocalDate.of(2015, 10, 1))
-		);
 
-		employeeRepository.saveAll(employees);
-
-		salaryService.raiseSalaryByJob("de");
-
-		employeeRepository.findAll().forEach(employee ->
-			System.out.format("Employee with name %s has salary %f, works since %s%n",
-				employee.getName(), employee.getSalary(), employee.getWorkStart()
-			)
-		);
+//		List<Employee> employees = Arrays.asList(
+//				new Employee(null, "Kovács Géza", "developer",
+//						900000, LocalDate.of(2015, 10, 1)),
+//				new Employee(null, "Nagy Péter", "Dev",
+//						900000, LocalDate.of(2015, 10, 1)),
+//				new Employee(null, "Kis Gábor", "tester",
+//						900000, LocalDate.of(2015, 10, 1))
+//		);
+//
+//		employeeRepository.saveAll(employees);
+//
+//		salaryService.raiseSalaryByJob("de");
+//
+//		employeeRepository.findAll().forEach(employee ->
+//			System.out.format("Employee with name %s has salary %f, works since %s%n",
+//				employee.getName(), employee.getSalary(), employee.getWorkStart()
+//			)
+//		);
 	}
 }
