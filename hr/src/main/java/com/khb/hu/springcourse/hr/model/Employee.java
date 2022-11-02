@@ -1,10 +1,8 @@
 package com.khb.hu.springcourse.hr.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 public class Employee {
@@ -15,6 +13,9 @@ public class Employee {
     private String job;
     private double salary;
     private LocalDate workStart;
+
+    @ManyToOne
+    private Company company;
 
     public Employee(){}
 
@@ -64,5 +65,26 @@ public class Employee {
 
     public void setWorkStart(LocalDate workStart) {
         this.workStart = workStart;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(id, employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
