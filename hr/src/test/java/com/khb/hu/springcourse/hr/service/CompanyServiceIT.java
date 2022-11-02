@@ -33,10 +33,7 @@ class CompanyServiceIT {
 
     @Test
     void findByExample_ById() {
-        List<Company> companies = companyRepository.saveAll(Arrays.asList(
-                new Company("company1"),
-                new Company("company2"),
-                new Company("comp3")));
+        List<Company> companies = saveDefaultTestCompanies();
 
         List<Company> found = companyService.findByExample(new Company(companies.get(1).getId()));
 
@@ -45,10 +42,7 @@ class CompanyServiceIT {
 
     @Test
     void findByExample_ByName() {
-        List<Company> companies = companyRepository.saveAll(Arrays.asList(
-                new Company("company1"),
-                new Company("company2"),
-                new Company("comp3")));
+        List<Company> companies = saveDefaultTestCompanies();
 
         List<Company> found = companyService.findByExample(new Company("ny"));
 
@@ -57,12 +51,45 @@ class CompanyServiceIT {
 
     @Test
     void findByExample_ByIdAndName() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        List<Company> found = companyService.findByExample(new Company(companies.get(1).getId(),"ny"));
+
+        assertThat(found).containsExactly(companies.get(1));
+    }
+
+
+    @Test
+    void findByExampleWithSpecification_ById() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        List<Company> found = companyService.findByExampleWithSpecification(new Company(companies.get(1).getId()));
+
+        assertThat(found).containsExactly(companies.get(1));
+    }
+
+    private List<Company> saveDefaultTestCompanies() {
         List<Company> companies = companyRepository.saveAll(Arrays.asList(
                 new Company("company1"),
                 new Company("company2"),
                 new Company("comp3")));
+        return companies;
+    }
 
-        List<Company> found = companyService.findByExample(new Company(companies.get(1).getId(),"ny"));
+    @Test
+    void findByExampleWithSpecification_ByName() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        List<Company> found = companyService.findByExampleWithSpecification(new Company("ny"));
+
+        assertThat(found).containsExactly(companies.get(0), companies.get(1));
+    }
+
+    @Test
+    void findByExampleWithSpecification_ByIdAndName() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        List<Company> found = companyService.findByExampleWithSpecification(new Company(companies.get(1).getId(),"ny"));
 
         assertThat(found).containsExactly(companies.get(1));
     }
