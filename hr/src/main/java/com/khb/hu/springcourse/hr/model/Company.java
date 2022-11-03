@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@NamedEntityGraph(
+        name = "Company.allRelationships",
+        attributeNodes = {
+            @NamedAttributeNode("employees")
+        }
+)
 public class Company {
 
     @Id

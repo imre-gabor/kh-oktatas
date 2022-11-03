@@ -194,7 +194,7 @@ class CompanyServiceIT {
 
         Company example = new Company("ny");
         example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
-        List<Company> found = companyService.findByExampleWithSpecification(example);
+        List<Company> found = companyService.findByExampleWithSpecificationAndEntityGraph(example, "Company.allRelationships");
 
         assertThat(found.get(0).getEmployees().get(0).getId())
                 .isEqualTo(employee.getId());

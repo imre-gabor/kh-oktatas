@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -101,8 +102,9 @@ public class CompanyService {
 
         TypedQuery<Company> query = em.createQuery(cq);
 
-        //TODO: add entity graph as hint
-        
+        EntityGraph<?> entityGraph = em.getEntityGraph(entityGraphName);
+        query.setHint(org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.LOAD.getKey(), entityGraph);
+
         return query.getResultList();
 
     }
