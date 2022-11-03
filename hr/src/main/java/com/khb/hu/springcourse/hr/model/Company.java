@@ -4,18 +4,23 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @NamedEntityGraph(
-        name = "Company.allRelationships",
+        name = "Company.withEmployees",
         attributeNodes = {
             @NamedAttributeNode("employees")
         }
 )
+@NamedEntityGraph(
+        name = "Company.withEmployeesAndAddresses",
+        attributeNodes = {
+                @NamedAttributeNode("employees"),
+                @NamedAttributeNode("addresses")
+        }
+)
+
 public class Company {
 
     @Id
@@ -26,6 +31,9 @@ public class Company {
     @OneToMany(mappedBy = "company"/*, fetch = FetchType.EAGER*/)
     //@Fetch(FetchMode.SELECT)
     private List<Employee> employees;
+
+    @ManyToMany(mappedBy = "companies")
+    private Set<Address> addresses;
 
     public Company(){}
 
@@ -47,6 +55,13 @@ public class Company {
         if(this.employees == null)
             this.employees = new ArrayList<>();
         this.employees.add(employee);
+    }
+
+    public void addAddress(Address address){
+        address.getCompanies().add(this);
+        if(this.addresses == null)
+            this.addresses = new HashSet<>();
+        this.addresses.add(address);
     }
 
 
@@ -72,6 +87,14 @@ public class Company {
 
     public void setEmployees(List<Employee> employees) {
         this.employees = employees;
+    }
+
+    public Set<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Set<Address> addresses) {
+        this.addresses = addresses;
     }
 
     @Override

@@ -18,6 +18,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import static com.khb.hu.springcourse.hr.service.CompanySpecifications.*;
 
@@ -107,6 +108,41 @@ public class CompanyService {
 
         return query.getResultList();
 
+    }
+
+
+    @Transactional
+    public List<Company> findByExampleWithSpecificationAndFetchAllRelationships(Company company) {
+        Integer id = company.getId();
+        String name = company.getName();
+
+        Specification<Company> spec = Specification.where(null);
+        if(id != null){
+            spec = spec.and(idEquals(id));
+        }
+
+        if(StringUtils.hasLength(name)){
+            spec = spec.and(nameContains(name));
+        }
+
+        if(!CollectionUtils.isEmpty(company.getEmployees())) {
+            Employee employee = company.getEmployees().get(0);
+            String employeeName = employee.getName();
+            LocalDate employeeWorkStart = employee.getWorkStart();
+            if(StringUtils.hasLength(employeeName)){
+                spec = spec.and(hasEmployeeWithNamePrefix(employeeName));
+            }
+            if(employeeWorkStart != null){
+                spec = spec.and(hasEmployeeStartedWorkingAtMonthOf(employeeWorkStart));
+            }
+        }
+
+        List<Company> companies = companyRepository.findAll(spec);
+        List<Integer> ids = companies.stream().map(Company::getId).toList();
+        companies = companyRepository.findByIdInWithAddresses(ids);
+        companies = companyRepository.findByIdInWithEmployees(ids);
+
+        return companies;
     }
 
 

@@ -1,7 +1,9 @@
 package com.khb.hu.springcourse.hr.service;
 
+import com.khb.hu.springcourse.hr.model.Address;
 import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.model.Employee;
+import com.khb.hu.springcourse.hr.repository.AddressRepository;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +30,8 @@ class CompanyServiceIT {
     CompanyRepository companyRepository;
     @Autowired
     EmployeeRepository employeeRepository;
+    @Autowired
+    AddressRepository addressRepository;
 
     @BeforeEach
     void init(){
@@ -181,12 +185,16 @@ class CompanyServiceIT {
     }
 
     @Test
-    void findByExampleWithSpecification_ByNameAndEmployeeName_WithFetchingEmployees() {
+    void findByExampleWithSpecification_ByNameAndEmployeeName_WithFetchingEmployeesOnly() {
         List<Company> companies = saveDefaultTestCompanies();
 
         Employee employee = saveNewEmployeeForCompany("John Wayne",
                 LocalDate.of(2021, 10, 1),
                 companies.get(0));
+
+        Address address = addressRepository.save(new Address("Budapest", "Magyar tudósok körútja 2", "1111"));
+        companies.get(0).addAddress(address);
+        addressRepository.save(address);
 
         saveNewEmployeeForCompany("Bruce Wayne",
                 LocalDate.of(2021, 10, 1),
@@ -194,11 +202,73 @@ class CompanyServiceIT {
 
         Company example = new Company("ny");
         example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
-        List<Company> found = companyService.findByExampleWithSpecificationAndEntityGraph(example, "Company.allRelationships");
+        List<Company> found = companyService.findByExampleWithSpecificationAndEntityGraph(example, "Company.withEmployees");
 
         assertThat(found.get(0).getEmployees().get(0).getId())
                 .isEqualTo(employee.getId());
+        Assertions.assertThrows(LazyInitializationException.class,
+                () -> found.get(0).getAddresses().iterator());
     }
+
+    @Test
+    void findByExampleWithSpecification_ByNameAndEmployeeName_WithFetchingEmployeesAndAddresses() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        Employee employee = saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        Address address = addressRepository.save(new Address("Budapest", "Magyar tudósok körútja 2", "1111"));
+        companies.get(0).addAddress(address);
+        addressRepository.save(address);
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        List<Company> found = companyService.findByExampleWithSpecificationAndEntityGraph(example, "Company.withEmployeesAndAddresses");
+        //if addresses and employees were both lists, fetching them at once would not work
+        //still a problem with this solution: the result rows at SQL are Cartesian product, e.g.
+        //10 companies, with 10 employees and 10 addresses each, would result in 10*10*10 rows
+        //we avoid this at the next test case
+
+        assertThat(found.get(0).getEmployees().get(0).getId())
+                .isEqualTo(employee.getId());
+
+        assertThat(found.get(0).getAddresses().iterator().next().getId())
+                .isEqualTo(address.getId());
+    }
+
+
+    @Test
+    void findByExampleWithSpecification_ByNameAndEmployeeName_WithFetchingEmployeesAndAddresses_NoCartesian_Product() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        Employee employee = saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        Address address = addressRepository.save(new Address("Budapest", "Magyar tudósok körútja 2", "1111"));
+        companies.get(0).addAddress(address);
+        addressRepository.save(address);
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        List<Company> found = companyService.findByExampleWithSpecificationAndFetchAllRelationships(example);
+
+        assertThat(found.get(0).getEmployees().get(0).getId())
+                .isEqualTo(employee.getId());
+
+        assertThat(found.get(0).getAddresses().iterator().next().getId())
+                .isEqualTo(address.getId());
+    }
+
 
     private Employee saveNewEmployeeForCompany(String employeeName, LocalDate workStart, Company company) {
         Employee employee = employeeRepository.save(

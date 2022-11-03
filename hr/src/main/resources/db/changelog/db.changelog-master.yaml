@@ -62,3 +62,61 @@ databaseChangeLog:
              constraintName: fk_employee_company
              referencedColumnNames: id
              referencedTableName: company
+  - changeSet:
+      id: 3
+      author: gabor
+      changes:
+        - createTable:
+            tableName: address
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: city
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: street
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: zipcode
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: address_company
+            columns:
+              - column:
+                  name: address_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: company_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseColumnNames: company_id
+            baseTableName: address_company
+            constraintName: fk_address_company_to_company
+            referencedColumnNames: id
+            referencedTableName: company
+        - addForeignKeyConstraint:
+            baseColumnNames: address_id
+            baseTableName: address_company
+            constraintName: fk_address_company_to_address
+            referencedColumnNames: id
+            referencedTableName: address
