@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -269,6 +272,89 @@ class CompanyServiceIT {
                 .isEqualTo(address.getId());
     }
 
+
+    @Test
+    void findByExampleWithSpecificationPaged_ByNameAndEmployeeName_LazyFetch() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        Page<Company> foundPage = companyService.findByExampleWithSpecificationPaged(example, PageRequest.of(0, 10, Sort.by("id")));
+        assertThat(foundPage.getTotalElements()).isEqualTo(1);
+
+        List<Company> found = foundPage.getContent();
+        assertThat(found).containsExactly(companies.get(0));
+        Assertions.assertThrows(LazyInitializationException.class,
+                () -> found.get(0).getEmployees().iterator());
+        Assertions.assertThrows(LazyInitializationException.class,
+                () -> found.get(0).getAddresses().iterator());
+    }
+
+    @Test
+    void findByExampleWithSpecificationPaged_ByNameAndEmployeeName_WithFetchingEmployeesOnly() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        Employee employee = saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        Address address = addressRepository.save(new Address("Budapest", "Magyar tudósok körútja 2", "1111"));
+        companies.get(0).addAddress(address);
+        addressRepository.save(address);
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        List<Company> found = companyService.findByExampleWithSpecificationPagedAndEntityGraph(
+                example, PageRequest.of(0, 10, Sort.by("id")), "Company.withEmployees");
+        //this solution causes in-memory paging, fetchingf all rows from DB!!
+
+        assertThat(found.get(0).getEmployees().get(0).getId())
+                .isEqualTo(employee.getId());
+        Assertions.assertThrows(LazyInitializationException.class,
+                () -> found.get(0).getAddresses().iterator());
+    }
+
+    @Test
+    void findByExampleWithSpecificationPaged_ByNameAndEmployeeName_WithFetchingAllRelationships() {
+        List<Company> companies = saveDefaultTestCompanies();
+
+        Employee employee = saveNewEmployeeForCompany("John Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(0));
+
+        Address address = addressRepository.save(new Address("Budapest", "Magyar tudósok körútja 2", "1111"));
+        companies.get(0).addAddress(address);
+        addressRepository.save(address);
+
+        saveNewEmployeeForCompany("Bruce Wayne",
+                LocalDate.of(2021, 10, 1),
+                companies.get(1));
+
+        Company example = new Company("ny");
+        example.setEmployees(Arrays.asList(new Employee(null, "John", null, 0.0, null)));
+        Page<Company> foundPage = companyService.findByExampleWithSpecificationPagedAndFetchAllRelationships(
+                example, PageRequest.of(0, 10, Sort.by("id")));
+
+        assertThat(foundPage.getTotalElements()).isEqualTo(1);
+        List<Company> found = foundPage.getContent();
+
+        assertThat(found.get(0).getEmployees().get(0).getId())
+                .isEqualTo(employee.getId());
+        assertThat(found.get(0).getAddresses().iterator().next().getId())
+                .isEqualTo(address.getId());
+    }
 
     private Employee saveNewEmployeeForCompany(String employeeName, LocalDate workStart, Company company) {
         Employee employee = employeeRepository.save(

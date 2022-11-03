@@ -6,6 +6,8 @@ import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -95,6 +97,13 @@ public class CompanyService {
             }
         }
 
+        TypedQuery<Company> query = createQueryWithSpecificationAndEntityGraph(spec, entityGraphName);
+
+        return query.getResultList();
+
+    }
+
+    private TypedQuery<Company> createQueryWithSpecificationAndEntityGraph(Specification<Company> spec, String entityGraphName) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Company> cq = cb.createQuery(Company.class);
         Root<Company> root = cq.from(Company.class);
@@ -105,9 +114,7 @@ public class CompanyService {
 
         EntityGraph<?> entityGraph = em.getEntityGraph(entityGraphName);
         query.setHint(org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.LOAD.getKey(), entityGraph);
-
-        return query.getResultList();
-
+        return query;
     }
 
 
@@ -146,4 +153,99 @@ public class CompanyService {
     }
 
 
+    public Page<Company> findByExampleWithSpecificationPaged(Company company, Pageable pageable) {
+        Integer id = company.getId();
+        String name = company.getName();
+
+        Specification<Company> spec = Specification.where(null);
+        if(id != null){
+            spec = spec.and(idEquals(id));
+        }
+
+        if(StringUtils.hasLength(name)){
+            spec = spec.and(nameContains(name));
+        }
+
+        if(!CollectionUtils.isEmpty(company.getEmployees())) {
+            Employee employee = company.getEmployees().get(0);
+            String employeeName = employee.getName();
+            LocalDate employeeWorkStart = employee.getWorkStart();
+            if(StringUtils.hasLength(employeeName)){
+                spec = spec.and(hasEmployeeWithNamePrefix(employeeName));
+            }
+            if(employeeWorkStart != null){
+                spec = spec.and(hasEmployeeStartedWorkingAtMonthOf(employeeWorkStart));
+            }
+        }
+
+        return companyRepository.findAll(spec, pageable);
+    }
+
+    public List<Company> findByExampleWithSpecificationPagedAndEntityGraph(Company company, Pageable pageable, String entityGraphName) {
+        Integer id = company.getId();
+        String name = company.getName();
+
+        Specification<Company> spec = Specification.where(null);
+        if(id != null){
+            spec = spec.and(idEquals(id));
+        }
+
+        if(StringUtils.hasLength(name)){
+            spec = spec.and(nameContains(name));
+        }
+
+        if(!CollectionUtils.isEmpty(company.getEmployees())) {
+            Employee employee = company.getEmployees().get(0);
+            String employeeName = employee.getName();
+            LocalDate employeeWorkStart = employee.getWorkStart();
+            if(StringUtils.hasLength(employeeName)){
+                spec = spec.and(hasEmployeeWithNamePrefix(employeeName));
+            }
+            if(employeeWorkStart != null){
+                spec = spec.and(hasEmployeeStartedWorkingAtMonthOf(employeeWorkStart));
+            }
+        }
+
+        TypedQuery<Company> query = createQueryWithSpecificationAndEntityGraph(spec, entityGraphName);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+
+        //TODO: add sorting from pageable, but not implemented, because this solution causes
+        //HHH000104: firstResult/maxResults specified with collection fetch; applying in memory!
+        return query.getResultList();
+    }
+
+    @Transactional
+    public Page<Company> findByExampleWithSpecificationPagedAndFetchAllRelationships(Company company, Pageable pageable) {
+        Integer id = company.getId();
+        String name = company.getName();
+
+        Specification<Company> spec = Specification.where(null);
+        if(id != null){
+            spec = spec.and(idEquals(id));
+        }
+
+        if(StringUtils.hasLength(name)){
+            spec = spec.and(nameContains(name));
+        }
+
+        if(!CollectionUtils.isEmpty(company.getEmployees())) {
+            Employee employee = company.getEmployees().get(0);
+            String employeeName = employee.getName();
+            LocalDate employeeWorkStart = employee.getWorkStart();
+            if(StringUtils.hasLength(employeeName)){
+                spec = spec.and(hasEmployeeWithNamePrefix(employeeName));
+            }
+            if(employeeWorkStart != null){
+                spec = spec.and(hasEmployeeStartedWorkingAtMonthOf(employeeWorkStart));
+            }
+        }
+
+        Page<Company> page = companyRepository.findAll(spec, pageable);
+        List<Integer> ids = page.getContent().stream().map(Company::getId).toList();
+        companyRepository.findByIdInWithEmployees(ids);
+        companyRepository.findByIdInWithAddresses(ids);
+
+        return page;
+    }
 }
