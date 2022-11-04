@@ -8,11 +8,16 @@ import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -58,6 +63,26 @@ public class CompanyController {
     @PostMapping("/{id}/employees")
     public CompanyDto addEmployee(@PathVariable int id, @RequestBody EmployeeDto employeeDto){
         return companyMapper.companyToDto(companyService.addEmployee(id, employeeMapper.dtoToEmployee(employeeDto)));
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<List<CompanyDto>> search(@RequestBody CompanyDto example, @SortDefault("id") Pageable pageable, @RequestParam Optional<Boolean> full){
+        List<CompanyDto> result = null;
+        final Page<Company> foundPage;
+        if(full.orElse(false)) {
+            foundPage = companyService.findByExampleWithSpecificationPagedAndFetchAllRelationships(companyMapper.dtoToCompany(example), pageable);
+            result = foundPage.map(companyMapper::companyToDto).getContent();
+
+        } else {
+            foundPage = companyService.findByExampleWithSpecificationPaged(companyMapper.dtoToCompany(example), pageable);
+            result = foundPage.map(companyMapper::companyToDtoSummary).getContent();
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .headers(headers -> headers.add("x-total-count",String.valueOf(foundPage.getTotalElements())))
+                .body(result);
+
     }
 
 }
