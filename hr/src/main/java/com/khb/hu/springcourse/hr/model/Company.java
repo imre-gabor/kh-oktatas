@@ -90,6 +90,8 @@ public class Company {
     }
 
     public Set<Address> getAddresses() {
+        if(this.addresses == null)
+            this.addresses = new HashSet<>();
         return addresses;
     }
 

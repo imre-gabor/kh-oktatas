@@ -3,6 +3,7 @@ package com.khb.hu.springcourse.hr.service;
 import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
+import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -32,6 +33,9 @@ public class CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -247,5 +251,15 @@ public class CompanyService {
         companyRepository.findByIdInWithAddresses(ids);
 
         return page;
+    }
+
+    @Transactional
+    public Company addEmployee(int id, Employee employee) {
+        Company company = companyRepository.findById(id).get();
+        Employee savedEmployee = employeeRepository.save(employee);
+        company.addEmployee(savedEmployee);
+        company.getEmployees().size();
+        company.getAddresses().size();
+        return company;
     }
 }

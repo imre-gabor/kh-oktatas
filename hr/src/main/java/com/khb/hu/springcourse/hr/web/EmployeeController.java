@@ -37,7 +37,7 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public EmployeeDto findById(@PathVariable int id) {
-        Employee employee = employeeRepository.findById(id)
+        Employee employee = employeeRepository.findByIdWithCompanyAndAddresses(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return employeeMapper.employeeToDto(employee);
     }

@@ -10,14 +10,12 @@ import org.mapstruct.Mapping;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface EmployeeMapper {
-
-    EmployeeDto employeeToDto(Employee employee);
-
-    List<EmployeeDto> employeesToDtos(List<Employee> employee);
-
-    Employee dtoToEmployee(EmployeeDto employeeDto);
-
-    @Mapping(target = "employees", ignore = true)
+public interface CompanyMapper {
     CompanyDto companyToDto(Company company);
+
+    List<CompanyDto> companiesToDtos(List<Company> company);
+    Company dtoToCompany(CompanyDto companyDto);
+
+    @Mapping(target = "company", ignore = true)
+    EmployeeDto employeeDto(Employee employee);
 }
