@@ -1,5 +1,7 @@
 package com.khb.hu.springcourse.hr.web;
 
+import com.khb.hu.springcourse.hr.dto.EmployeeDto;
+import com.khb.hu.springcourse.hr.mapper.EmployeeMapper;
 import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import com.khb.hu.springcourse.hr.service.EmployeeService;
@@ -22,16 +24,22 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private EmployeeMapper employeeMapper;
+
     @PostMapping
-    public Employee create(@RequestBody Employee employee) {
+    public EmployeeDto create(@RequestBody EmployeeDto employee) {
         employee.setId(null);
-        return employeeRepository.save(employee);
+        return employeeMapper.employeeToDto(
+                employeeRepository.save(
+                        employeeMapper.dtoToEmployee(employee)));
     }
 
     @GetMapping("/{id}")
-    public Employee findById(@PathVariable int id) {
-        return employeeRepository.findById(id)
+    public EmployeeDto findById(@PathVariable int id) {
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return employeeMapper.employeeToDto(employee);
     }
 
 //    @GetMapping("/{id}")
@@ -51,8 +59,8 @@ public class EmployeeController {
 //    }
 
     @GetMapping
-    public List<Employee> findAll() {
-        return employeeRepository.findAll();
+    public List<EmployeeDto> findAll() {
+        return employeeMapper.employeesToDtos(employeeRepository.findAll());
     }
 
     @DeleteMapping("/{id}")
@@ -61,11 +69,11 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public Employee modify(@PathVariable int id, @RequestBody Employee employee){
+    public EmployeeDto modify(@PathVariable int id, @RequestBody EmployeeDto employee){
         employee.setId(id);
-        Employee modifiedEmployee = employeeService.modify(employee);
+        Employee modifiedEmployee = employeeService.modify(employeeMapper.dtoToEmployee(employee));
         if(modifiedEmployee != null) {
-            return modifiedEmployee;
+            return employeeMapper.employeeToDto(modifiedEmployee);
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
