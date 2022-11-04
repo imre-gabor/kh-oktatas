@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,5 +79,11 @@ public class EmployeeController {
         } else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
+    public String uploadImageForEmployee(@PathVariable int id, @RequestPart MultipartFile content) throws IOException {
+        String fileName = employeeService.saveImage(id, content.getInputStream());
+        return "/api/images/" + id + "/" + fileName;
     }
 }

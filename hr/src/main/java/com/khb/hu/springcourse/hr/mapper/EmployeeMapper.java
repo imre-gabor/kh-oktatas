@@ -4,8 +4,10 @@ import com.khb.hu.springcourse.hr.dto.CompanyDto;
 import com.khb.hu.springcourse.hr.dto.EmployeeDto;
 import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.model.Employee;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -15,9 +17,15 @@ public interface EmployeeMapper {
 
     EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
+
     EmployeeDto employeeToDto(Employee employee);
 
+    @IterableMapping(qualifiedByName = "summary")
     List<EmployeeDto> employeesToDtos(List<Employee> employee);
+
+    @Named("summary")
+    @Mapping(target = "company", ignore = true)
+    EmployeeDto employeeToDtoSummary(Employee employee);
 
     Employee dtoToEmployee(EmployeeDto employeeDto);
 
