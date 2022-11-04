@@ -15,8 +15,8 @@ import java.util.List;
 @SpringBootApplication
 public class HrApplication implements CommandLineRunner {
 
-	@Autowired
-	SalaryService salaryService;
+//	@Autowired
+//	SalaryService salaryService;
 
 	@Autowired
 	EmployeeRepository employeeRepository;

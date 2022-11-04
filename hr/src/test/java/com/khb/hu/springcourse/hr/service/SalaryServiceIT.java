@@ -4,6 +4,7 @@ import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import static org.assertj.core.api.Assertions.*;
 
+import com.khb.hu.springcourse.hr.util.IntegrationTestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")
-class SalaryServiceIT {
+class SalaryServiceIT extends IntegrationTestBase {
 
     @Autowired
     SalaryService salaryService;
 
     @Autowired
     EmployeeRepository employeeRepository;
-
-    @BeforeEach
-    void init(){
-        employeeRepository.deleteAllInBatch();
-    }
 
     @Test
     void raiseSalaryByJob() {

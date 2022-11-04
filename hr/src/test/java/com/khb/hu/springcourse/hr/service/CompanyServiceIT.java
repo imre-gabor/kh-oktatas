@@ -8,6 +8,7 @@ import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.khb.hu.springcourse.hr.util.IntegrationTestBase;
 import org.hibernate.LazyInitializationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-class CompanyServiceIT {
+class CompanyServiceIT extends IntegrationTestBase {
 
     @Autowired
     CompanyService companyService;
@@ -35,12 +36,6 @@ class CompanyServiceIT {
     EmployeeRepository employeeRepository;
     @Autowired
     AddressRepository addressRepository;
-
-    @BeforeEach
-    void init(){
-        employeeRepository.deleteAllInBatch();
-        companyRepository.deleteAllInBatch();
-    }
 
 
     @Test
