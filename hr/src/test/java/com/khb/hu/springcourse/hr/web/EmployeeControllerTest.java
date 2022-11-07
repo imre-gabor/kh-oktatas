@@ -24,11 +24,9 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(EmployeeController.class)
+@WebMvcTest(EmployeeControllerOld.class)
 class EmployeeControllerTest {
 
     @Autowired

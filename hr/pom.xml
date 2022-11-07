@@ -46,6 +46,12 @@
 			<version>1.6.12</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.4</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -89,6 +95,30 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>6.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/openapi/hr-openapi.yml</inputSpec>
+							<generatorName>spring</generatorName>
+							<configOptions>
+								<useTags>true</useTags>
+								<dateLibrary>java8-datetime</dateLibrary>
+								<configPackage>com.khb.hu.springcourse.hr.config</configPackage>
+								<apiPackage>com.khb.hu.springcourse.hr.api</apiPackage>
+								<modelPackage>com.khb.hu.springcourse.hr.api.model</modelPackage>
+								<interfaceOnly>true</interfaceOnly>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

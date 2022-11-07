@@ -7,7 +7,6 @@ import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import com.khb.hu.springcourse.hr.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,13 +14,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-@RestController
-@RequestMapping("/api/employees")
-public class EmployeeController {
+//@RestController
+//@RequestMapping("/api/employees")
+public class EmployeeControllerOld {
 
     @Autowired
     private EmployeeRepository employeeRepository;

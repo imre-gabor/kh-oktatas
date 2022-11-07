@@ -19,9 +19,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/companies")
-public class CompanyController {
+//@RestController
+//@RequestMapping("/api/companies")
+public class CompanyControllerOld {
 
     @Autowired
     private CompanyRepository companyRepository;
