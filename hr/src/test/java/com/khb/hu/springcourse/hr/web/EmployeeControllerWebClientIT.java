@@ -1,6 +1,6 @@
 package com.khb.hu.springcourse.hr.web;
 
-import com.khb.hu.springcourse.hr.dto.EmployeeDto;
+import com.khb.hu.springcourse.hr.api.model.EmployeeDto;
 import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import com.khb.hu.springcourse.hr.util.IntegrationTestBase;

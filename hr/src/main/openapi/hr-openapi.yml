@@ -22,7 +22,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeDto'
     put:
@@ -46,7 +46,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeDto'
     delete:
@@ -72,7 +72,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -91,7 +91,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeDto'
   '/api/employees/{id}/images':
@@ -121,19 +121,19 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: string
   /api/companies:
     get:
       tags:
         - company-controller
-      operationId: findAll_1
+      operationId: findAllCompanies
       responses:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -141,7 +141,7 @@ paths:
     post:
       tags:
         - company-controller
-      operationId: create_1
+      operationId: createCompany
       requestBody:
         content:
           application/json:
@@ -152,7 +152,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/CompanyDto'
   '/api/companies/{id}/employees':
@@ -177,7 +177,7 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/CompanyDto'
   '/api/images/{id}/{imageid}':
@@ -208,7 +208,7 @@ paths:
     get:
       tags:
         - company-controller
-      operationId: findById_1
+      operationId: findCompanyById
       parameters:
         - name: id
           in: path
@@ -220,13 +220,13 @@ paths:
         '200':
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/CompanyDto'
     delete:
       tags:
         - company-controller
-      operationId: delete_1
+      operationId: deleteCompany
       parameters:
         - name: id
           in: path

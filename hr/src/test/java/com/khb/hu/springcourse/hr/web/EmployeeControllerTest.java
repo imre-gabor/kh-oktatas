@@ -26,7 +26,7 @@ import java.util.List;
 
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(EmployeeControllerOld.class)
+@WebMvcTest(EmployeeController.class)
 class EmployeeControllerTest {
 
     @Autowired

@@ -1,23 +1,18 @@
 package com.khb.hu.springcourse.hr.web;
 
-import com.khb.hu.springcourse.hr.dto.EmployeeDto;
 import com.khb.hu.springcourse.hr.mapper.EmployeeMapper;
-import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import com.khb.hu.springcourse.hr.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-//@RestController
-//@RequestMapping("/api/employees")
+@RestController
+@RequestMapping("/api/employees")
 public class EmployeeControllerOld {
 
     @Autowired
@@ -29,20 +24,20 @@ public class EmployeeControllerOld {
     @Autowired
     private EmployeeMapper employeeMapper;
 
-    @PostMapping
-    public EmployeeDto create(@RequestBody EmployeeDto employee) {
-        employee.setId(null);
-        return employeeMapper.employeeToDto(
-                employeeRepository.save(
-                        employeeMapper.dtoToEmployee(employee)));
-    }
+//    @PostMapping
+//    public EmployeeDto create(@RequestBody EmployeeDto employee) {
+//        employee.setId(null);
+//        return employeeMapper.employeeToDto(
+//                employeeRepository.save(
+//                        employeeMapper.dtoToEmployee(employee)));
+//    }
 
-    @GetMapping("/{id}")
-    public EmployeeDto findById(@PathVariable int id) {
-        Employee employee = employeeRepository.findByIdWithCompanyAndAddresses(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return employeeMapper.employeeToDto(employee);
-    }
+//    @GetMapping("/{id}")
+//    public EmployeeDto findById(@PathVariable int id) {
+//        Employee employee = employeeRepository.findByIdWithCompanyAndAddresses(id)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        return employeeMapper.employeeToDto(employee);
+//    }
 
 //    @GetMapping("/{id}")
 //    public ResponseEntity<Employee> findById(@PathVariable int id) {
@@ -60,32 +55,32 @@ public class EmployeeControllerOld {
 //        }
 //    }
 
-    @GetMapping
-    public List<EmployeeDto> findAll() {
-        return employeeMapper.employeesToDtos(employeeRepository.findAll());
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable int id){
-        employeeRepository.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public EmployeeDto modify(@PathVariable int id, @RequestBody EmployeeDto employee){
-        employee.setId(id);
-        Employee modifiedEmployee = employeeService.modify(employeeMapper.dtoToEmployee(employee));
-        if(modifiedEmployee != null) {
-            return employeeMapper.employeeToDto(modifiedEmployee);
-        } else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
-    public String uploadImageForEmployee(@PathVariable int id, @RequestPart MultipartFile content) throws IOException {
-        String fileName = employeeService.saveImage(id, content.getInputStream());
-        return "/api/images/" + id + "/" + fileName;
-    }
+//    @GetMapping
+//    public List<EmployeeDto> findAll() {
+//        return employeeMapper.employeesToDtos(employeeRepository.findAll());
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    public void delete(@PathVariable int id){
+//        employeeRepository.deleteById(id);
+//    }
+//
+//    @PutMapping("/{id}")
+//    public EmployeeDto modify(@PathVariable int id, @RequestBody EmployeeDto employee){
+//        employee.setId(id);
+//        Employee modifiedEmployee = employeeService.modify(employeeMapper.dtoToEmployee(employee));
+//        if(modifiedEmployee != null) {
+//            return employeeMapper.employeeToDto(modifiedEmployee);
+//        } else{
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+//        }
+//    }
+//
+//    @PostMapping(value = "/{id}/images", consumes = "multipart/form-data")
+//    public String uploadImageForEmployee(@PathVariable int id, @RequestPart MultipartFile content) throws IOException {
+//        String fileName = employeeService.saveImage(id, content.getInputStream());
+//        return "/api/images/" + id + "/" + fileName;
+//    }
 
     @GetMapping("/generateReport")
     @Async
