@@ -237,6 +237,25 @@ paths:
       responses:
         '200':
           description: OK
+  /api/login:
+    post:
+      summary: endpoint for logging in
+      operationId: login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      tags:
+        - login-controller
+      description: returns JWT token
 components:
   schemas:
     AddressDto:
@@ -285,3 +304,14 @@ components:
           format: date
         company:
           $ref: '#/components/schemas/CompanyDto'
+    LoginDto:
+      title: LoginDto
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
