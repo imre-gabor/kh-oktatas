@@ -8,6 +8,7 @@ import com.khb.hu.springcourse.hr.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -85,5 +88,25 @@ public class EmployeeController {
     public String uploadImageForEmployee(@PathVariable int id, @RequestPart MultipartFile content) throws IOException {
         String fileName = employeeService.saveImage(id, content.getInputStream());
         return "/api/images/" + id + "/" + fileName;
+    }
+
+    @GetMapping("/generateReport")
+    @Async
+    public CompletableFuture<String> generateReport(){
+        CompletableFuture<String> result = employeeService.longRunning();
+        //version 1: no result in response, void method, users get the result some other way
+
+        //version 2: we wait for the result, blocking the IO thread --> not recommended
+        /*
+        try {
+            return result.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }*/
+
+        //version 3: controller method is async, it is not the IO thread that is blocked
+        return result;
     }
 }

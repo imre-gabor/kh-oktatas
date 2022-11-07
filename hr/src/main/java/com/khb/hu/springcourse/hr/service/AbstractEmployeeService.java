@@ -5,6 +5,7 @@ import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.scheduling.annotation.Async;
 
 import javax.transaction.Transactional;
 import java.io.FileOutputStream;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractEmployeeService implements EmployeeService {
 
@@ -41,5 +43,17 @@ public abstract class AbstractEmployeeService implements EmployeeService {
             ByteStreams.copy(is, os);
         }
         return uuid.toString();
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<String> longRunning() {
+        try {
+            Thread.sleep(5000);
+            System.out.println("longRunning is ready");
+            return CompletableFuture.completedFuture("abcdef");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
