@@ -1,7 +1,7 @@
 package com.khb.hu.springcourse.hr.mapper;
 
-import com.khb.hu.springcourse.hr.dto.CompanyDto;
-import com.khb.hu.springcourse.hr.dto.EmployeeDto;
+import com.khb.hu.springcourse.hr.api.model.CompanyDto;
+import com.khb.hu.springcourse.hr.api.model.EmployeeDto;
 import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.model.Employee;
 import org.mapstruct.IterableMapping;
