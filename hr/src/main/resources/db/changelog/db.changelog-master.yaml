@@ -120,3 +120,21 @@ databaseChangeLog:
             constraintName: fk_address_company_to_address
             referencedColumnNames: id
             referencedTableName: address
+  - changeSet:
+      id: 4
+      author: gabor
+      changes:
+        - createTable:
+            tableName: hr_user
+            columns:
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false

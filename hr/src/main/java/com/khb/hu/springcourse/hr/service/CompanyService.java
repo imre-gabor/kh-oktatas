@@ -10,6 +10,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -157,6 +158,7 @@ public class CompanyService {
     }
 
 
+    @PreAuthorize("hasAuthority('SEARCH_COMPANY')")
     public Page<Company> findByExampleWithSpecificationPaged(Company company, Pageable pageable) {
         Integer id = company.getId();
         String name = company.getName();

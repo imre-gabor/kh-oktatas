@@ -1,13 +1,16 @@
 package com.khb.hu.springcourse.hr;
 
 import com.khb.hu.springcourse.hr.model.Employee;
+import com.khb.hu.springcourse.hr.model.HrUser;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
+import com.khb.hu.springcourse.hr.repository.HrUserRepository;
 import com.khb.hu.springcourse.hr.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -23,12 +26,20 @@ public class HrApplication implements CommandLineRunner {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
+	@Autowired
+	HrUserRepository hrUserRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(HrApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
+
+		hrUserRepository.save(new HrUser("user", passwordEncoder.encode("pass")));
 
 //		List<Employee> employees = Arrays.asList(
 //				new Employee(null, "Kovács Géza", "developer",
