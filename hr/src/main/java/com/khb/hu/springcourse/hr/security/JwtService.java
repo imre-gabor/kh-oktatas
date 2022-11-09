@@ -28,7 +28,7 @@ public class JwtService {
                                 .map(GrantedAuthority::getAuthority)
                                 .toArray(String[]::new))
                 .withIssuer(HR_APP)
-                .withExpiresAt(OffsetDateTime.now().plusMinutes(2).toInstant())
+                .withExpiresAt(OffsetDateTime.now().plusHours(24).toInstant())
                 .sign(alg);
     }
 
