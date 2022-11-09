@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
                 .antMatchers("/api/login").permitAll()
+                .antMatchers("/ws/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/employees").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/employees").hasAuthority("CREATE_EMP")
                 .anyRequest().authenticated();

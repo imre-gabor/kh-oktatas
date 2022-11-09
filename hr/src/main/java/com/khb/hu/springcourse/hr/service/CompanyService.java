@@ -158,7 +158,7 @@ public class CompanyService {
     }
 
 
-    @PreAuthorize("hasAuthority('SEARCH_COMPANY')")
+    //@PreAuthorize("hasAuthority('SEARCH_COMPANY')")
     public Page<Company> findByExampleWithSpecificationPaged(Company company, Pageable pageable) {
         Integer id = company.getId();
         String name = company.getName();
