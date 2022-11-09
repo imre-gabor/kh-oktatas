@@ -1,11 +1,17 @@
 package com.khb.hu.springcourse.payroll.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+
+import javax.jms.ConnectionFactory;
 
 @Configuration
 public class JmsConfig {
@@ -17,5 +23,19 @@ public class JmsConfig {
         converter.setTypeIdPropertyName("_type");
         converter.setTargetType(MessageType.TEXT);
         return converter;
+    }
+
+    @Bean
+    public JmsListenerContainerFactory listenerContainerFactory(
+            ConnectionFactory connectionFactory,
+            DefaultJmsListenerContainerFactoryConfigurer configurer
+    ){
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        configurer.configure(factory, connectionFactory);
+        factory.setSubscriptionDurable(true);
+        //factory.setClientId("payroll-app"); --> throws Exception
+        ((SingleConnectionFactory)connectionFactory).setClientId("payroll-app");
+        //factory.setConcurrency("5-10");
+        return factory;
     }
 }
