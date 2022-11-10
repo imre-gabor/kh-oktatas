@@ -138,3 +138,5 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+  - include:
+      file: db/changelog/schedlock-changeset.xml
