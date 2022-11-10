@@ -50,6 +50,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .headers().frameOptions().disable() //so that h2-console can work
+                .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -57,6 +59,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/ws/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/employees").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/employees").hasAuthority("CREATE_EMP")
                 .anyRequest().authenticated();

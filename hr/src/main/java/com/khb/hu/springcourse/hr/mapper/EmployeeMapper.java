@@ -2,6 +2,7 @@ package com.khb.hu.springcourse.hr.mapper;
 
 import com.khb.hu.springcourse.hr.api.model.CompanyDto;
 import com.khb.hu.springcourse.hr.api.model.EmployeeDto;
+import com.khb.hu.springcourse.hr.dto.HistoryData;
 import com.khb.hu.springcourse.hr.model.Company;
 import com.khb.hu.springcourse.hr.model.Employee;
 import org.mapstruct.IterableMapping;
@@ -31,4 +32,8 @@ public interface EmployeeMapper {
 
     @Mapping(target = "employees", ignore = true)
     CompanyDto companyToDto(Company company);
+
+    HistoryData<EmployeeDto> employeeHistoryToDto(HistoryData<Employee> employee);
+
+    List<HistoryData<EmployeeDto>> employeeHistoryToDtos(List<HistoryData<Employee>> employees);
 }

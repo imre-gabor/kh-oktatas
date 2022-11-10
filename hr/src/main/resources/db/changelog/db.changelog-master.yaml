@@ -140,3 +140,5 @@ databaseChangeLog:
                     nullable: false
   - include:
       file: db/changelog/schedlock-changeset.xml
+  - include:
+      file: db/changelog/create-envers-tables.sql

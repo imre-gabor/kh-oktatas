@@ -1,10 +1,13 @@
 package com.khb.hu.springcourse.hr.model;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
+@Audited
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

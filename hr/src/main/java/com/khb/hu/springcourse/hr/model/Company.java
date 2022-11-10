@@ -2,6 +2,7 @@ package com.khb.hu.springcourse.hr.model;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.*;
@@ -20,7 +21,7 @@ import java.util.*;
                 @NamedAttributeNode("addresses")
         }
 )
-
+@Audited
 public class Company {
 
     @Id
