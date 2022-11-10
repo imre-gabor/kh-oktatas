@@ -3,6 +3,7 @@ package com.khb.hu.springcourse.hr.web;
 import com.khb.hu.springcourse.hr.mapper.EmployeeMapper;
 import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
+import com.khb.hu.springcourse.hr.repository.HrUserRepository;
 import com.khb.hu.springcourse.hr.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,7 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class})
+@ActiveProfiles("nosec")
 @WebMvcTest(EmployeeController.class)
 class EmployeeControllerTest {
 
@@ -40,6 +44,14 @@ class EmployeeControllerTest {
 
     @MockBean
     EmployeeMapper employeeMapper;
+
+    @MockBean
+    PasswordEncoder passwordEncoder;
+
+    @MockBean
+    HrUserRepository hrUserRepository;
+
+
 
     @Test
     void findAll() throws Exception {

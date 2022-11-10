@@ -3,6 +3,7 @@ package com.khb.hu.springcourse.hr.config;
 import com.khb.hu.springcourse.hr.security.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
+@Profile("!nosec")
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 

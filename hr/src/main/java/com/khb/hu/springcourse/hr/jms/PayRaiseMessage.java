@@ -1,5 +1,7 @@
 package com.khb.hu.springcourse.hr.jms;
 
+import java.util.Objects;
+
 public class PayRaiseMessage {
     private int employeeId;
     private double newSalary;
@@ -26,5 +28,18 @@ public class PayRaiseMessage {
 
     public void setNewSalary(double newSalary) {
         this.newSalary = newSalary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PayRaiseMessage that = (PayRaiseMessage) o;
+        return employeeId == that.employeeId && Double.compare(that.newSalary, newSalary) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, newSalary);
     }
 }
