@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
-@EnableAsync
 public class HrApplication implements CommandLineRunner {
 
 //	@Autowired

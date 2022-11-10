@@ -5,6 +5,7 @@ import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.CompanyRepository;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -162,6 +163,7 @@ public class CompanyService {
 
 
     //@PreAuthorize("hasAuthority('SEARCH_COMPANY')")
+    @Cacheable("companySearchResults")
     public Page<Company> findByExampleWithSpecificationPaged(Company company, Pageable pageable) {
         externalSystemService.callExternalService2();
         Integer id = company.getId();
