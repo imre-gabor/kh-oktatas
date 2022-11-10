@@ -38,6 +38,9 @@ public class CompanyService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    IExternalSystemService externalSystemService;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -160,6 +163,7 @@ public class CompanyService {
 
     //@PreAuthorize("hasAuthority('SEARCH_COMPANY')")
     public Page<Company> findByExampleWithSpecificationPaged(Company company, Pageable pageable) {
+        externalSystemService.callExternalService2();
         Integer id = company.getId();
         String name = company.getName();
 
