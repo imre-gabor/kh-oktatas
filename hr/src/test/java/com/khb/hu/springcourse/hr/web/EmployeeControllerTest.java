@@ -4,6 +4,7 @@ import com.khb.hu.springcourse.hr.mapper.EmployeeMapper;
 import com.khb.hu.springcourse.hr.model.Employee;
 import com.khb.hu.springcourse.hr.repository.EmployeeRepository;
 import com.khb.hu.springcourse.hr.repository.HrUserRepository;
+import com.khb.hu.springcourse.hr.security.JwtService;
 import com.khb.hu.springcourse.hr.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -29,8 +31,9 @@ import java.util.List;
 
 
 @ExtendWith({SpringExtension.class})
-@ActiveProfiles("nosec")
-@WebMvcTest(EmployeeController.class)
+//@ActiveProfiles("nosec") --> works only with @SpringBootTest, not with @WebMvcTest.
+//With @WebMvcTest, SecurityAutoConfiguration should be excluded as follows:
+@WebMvcTest(controllers = EmployeeController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class EmployeeControllerTest {
 
     @Autowired
@@ -51,7 +54,8 @@ class EmployeeControllerTest {
     @MockBean
     HrUserRepository hrUserRepository;
 
-
+    @MockBean
+    JwtService jwtService;
 
     @Test
     void findAll() throws Exception {
